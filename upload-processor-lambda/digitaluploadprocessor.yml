@@ -1,0 +1,29 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: An AWS Serverless Specification template describing your function.
+Resources:
+  digitaluploadprocessortest:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs10.x
+      CodeUri: s3://cw-code-upload/digitaluploadprocessor-17884496-e565-4411-9c92-30fd80944318.zip
+      Description: ''
+      MemorySize: 1024
+      Timeout: 10
+      Role: >-
+        arn:aws:iam::518679741595:role/service-role/Image-conversion-role-h9mzobyt
+      Events:
+        SNS1:
+          Type: SNS
+          Properties:
+            Topic:
+              Ref: SNSTopic1
+      Environment:
+        Variables:
+          CLEAN_BUCKET: cw-digital-clean
+          UPLOAD_BUCKET: cw-digital-upload
+      Layers:
+        - 'arn:aws:lambda:us-east-1:518679741595:layer:image-magick:1'
+  SNSTopic1:
+    Type: 'AWS::SNS::Topic'
