@@ -1,0 +1,53 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  sampleLambda
+Transform:
+- AWS::Serverless-2016-10-31
+Resources:  
+  ScheduledEventLogger:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: sampleLambda
+      Description: SAM Sample Lambda 
+      Role: arn:aws:iam::518679741595:role/service-role/Image-conversion-role-h9mzobyt
+      Runtime: nodejs10.x
+      Handler: src/handlers/scheduled-event-logger.scheduledEventLoggerHandler
+      # This property associates this Lambda function with a scheduled CloudWatch Event. For all available properties, see
+      # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#schedule
+      # This example runs every hour.
+      Events:
+        CloudWatchEvent:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 * * * ? *)
+      MemorySize: 256
+      Timeout: 10
+      Tags:
+        ASG: GROUP
+        COSTCENTER: 1234
+      
+  DynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: mySampleDynamoDB 
+      AttributeDefinitions: 
+        - AttributeName: keyName
+          AttributeType: S
+        - AttributeName: uploadStatus
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: keyName
+          KeyType: HASH
+        - AttributeName: uploadStatus
+          KeyType: RANGE
+      ProvisionedThroughput: 
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      TimeToLiveSpecification:
+          AttributeName: itemTTL
+          Enabled: true
+      Tags:
+        - Key: ASG
+          Value: GROUP
+        - Key: COSTCENTER
+          Value: 1234
