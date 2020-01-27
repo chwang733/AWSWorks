@@ -12,16 +12,16 @@ Resources:
       Runtime: nodejs10.x
       Handler: src/handlers/scheduled-event-logger.scheduledEventLoggerHandler
       Events:
-        CloudWatchEvent:
-          Type: Schedule
+        SNSTopicEvent:
+          Type: SNS
           Properties:
-            Schedule: cron(0 * * * ? *)
+            Topic: arn:aws:sns:us-east-1:518679741595:testTopic
       MemorySize: 256
       Timeout: 10
       Tags:
         ASG: GROUP
         COSTCENTER: 1234
-      CodeUri: s3://cw-code-upload/19b15514eb608f4a1d8f8026e84f6f1d
+      CodeUri: s3://cw-code-upload/8e5d2f8d2035d8f460e36d3815150f2a
   DynamoDBTable:
     Type: AWS::DynamoDB::Table
     Properties:
